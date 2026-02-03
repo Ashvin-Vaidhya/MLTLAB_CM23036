@@ -2,23 +2,14 @@
 <html>
 <head>
     <title>Hello TensorFlow.js</title>
-
-    <!-- TensorFlow.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
 </head>
-
 <body>
     <h2>Hello TensorFlow.js</h2>
-
-    <script>
-        // Create tensors
+    <script>     
         const a = tf.tensor([1, 2, 3]);
         const b = tf.tensor([4, 5, 6]);
-
-        // Perform addition
         const c = a.add(b);
-
-        // Print result to console
         c.print();
     </script>
 </body>
