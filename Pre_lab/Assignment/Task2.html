@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tensor Operations</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+</head>
+<body>
+<h3>Check Console (F12)</h3>
+
+<script>
+  const a = tf.tensor([1,2,3]);
+  const b = tf.tensor([4,5,6]);
+
+  const add = a.add(b);
+  const mul = a.mul(b);
+
+  console.log("Addition:");
+  add.print();
+
+  console.log("Multiplication:");
+  mul.print();
+</script>
+
+</body>
+</html>

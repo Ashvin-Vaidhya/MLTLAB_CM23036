@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tensor Dimensions</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+</head>
+<body>
+<h3>Check Console (F12)</h3>
+
+<script>
+  // Scalar (0D)
+  const scalar = tf.scalar(10);
+  console.log("Scalar:");
+  scalar.print();
+
+  // Vector (1D)
+  const vector = tf.tensor([1, 2, 3]);
+  console.log("Vector:");
+  vector.print();
+
+  // Matrix (2D)
+  const matrix = tf.tensor([[1,2],[3,4]]);
+  console.log("Matrix:");
+  matrix.print();
+</script>
+
+</body>
+</html>

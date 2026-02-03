@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Reshape & Flatten</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+</head>
+<body>
+<h3>Check Console (F12)</h3>
+
+<script>
+  const t = tf.tensor([1,2,3,4,5,6]);
+
+  // Reshape into 2x3 matrix
+  const reshaped = t.reshape([2,3]);
+
+  // Flatten back to 1D
+  const flat = reshaped.flatten();
+
+  console.log("Original:");
+  t.print();
+
+  console.log("Reshaped (2x3):");
+  reshaped.print();
+
+  console.log("Flatten:");
+  flat.print();
+</script>
+
+</body>
+</html>
