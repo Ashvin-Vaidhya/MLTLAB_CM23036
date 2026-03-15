@@ -1,29 +1,38 @@
-<h3>Draw a Digit (0-9)</h3>
-<canvas id="canvas" width="140" height="140" style="border:2px solid #000; background: black;"></canvas>
-<button onclick="clearCanvas()">Clear</button>
-<button onclick="predictDigit()">Classify Digit</button>
-<h2 id="prediction-text">Prediction: -</h2>
 
-<script>
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    let drawing = false;
-
-    canvas.onmousedown = () => drawing = true;
-    canvas.onmouseup = () => drawing = false;
-    canvas.onmousemove = (e) => {
-        if(!drawing) return;
-        ctx.fillStyle = "white";
-        ctx.beginPath();
-        ctx.arc(e.offsetX, e.offsetY, 8, 0, Math.PI*2);
-        ctx.fill();
-    };
-
-    function clearCanvas() { ctx.clearRect(0, 0, 140, 140); }
-
-    function predictDigit() {
-        // Logic: Resize 140x140 canvas to 28x28 tensor and run model.predict()
-        const randomDigit = Math.floor(Math.random() * 10); // Mock prediction
-        document.getElementById('prediction-text').innerText = "Prediction: " + randomDigit;
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Assignment 2 - Digit Recognition</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0"></script>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #eef2ff;
     }
-</script>
+    canvas {
+      border: 2px solid #000;
+      background: white;
+      cursor: crosshair;
+    }
+    button {
+      padding: 10px 18px;
+      margin: 10px;
+      font-size: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Assignment 2: Draw & Predict Digit</h2>
+
+  <canvas id="canvas" width="280" height="280"></canvas><br>
+
+  <button onclick="clearCanvas()">Clear</button>
+  <button onclick="predict()">Predict</button>
+
+  <h3 id="output">Prediction: -</h3>
+
+  <script src="main.js"></script>
+</body>
+</html>
