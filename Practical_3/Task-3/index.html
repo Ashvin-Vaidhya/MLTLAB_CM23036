@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>RNN vs Dense Sentiment Comparison</title>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+
+<style>
+body{
+font-family: Arial;
+background:#eef2f7;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+background:white;
+padding:30px;
+width:500px;
+border-radius:10px;
+box-shadow:0 5px 20px rgba(0,0,0,0.2);
+text-align:center;
+}
+
+button{
+padding:10px 20px;
+margin:10px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+input{
+width:90%;
+padding:10px;
+margin-top:10px;
+}
+
+.result{
+margin-top:20px;
+font-size:18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Sentiment Model Comparison</h2>
+
+<button onclick="trainModels()">Train Models</button>
+
+<p id="denseAcc">Dense Accuracy: --</p>
+<p id="rnnAcc">RNN Accuracy: --</p>
+
+<hr>
+
+<input id="textInput" placeholder="Enter sentence">
+
+<button onclick="predict()">Predict</button>
+
+<div class="result" id="result"></div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
