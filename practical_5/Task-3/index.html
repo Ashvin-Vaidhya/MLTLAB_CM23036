@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Real-Time Object Detection</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+
+<style>
+body{
+font-family:Arial;
+text-align:center;
+background:#eef2f7;
+}
+
+#container{
+position:relative;
+display:inline-block;
+}
+
+video{
+border:3px solid black;
+border-radius:10px;
+}
+
+canvas{
+position:absolute;
+left:0;
+top:0;
+}
+
+#info{
+font-size:20px;
+margin-top:10px;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Real-Time Object Detection (COCO-SSD)</h2>
+
+<div id="container">
+<video id="webcam" width="640" height="480" autoplay muted></video>
+<canvas id="canvas" width="640" height="480"></canvas>
+</div>
+
+<div id="info">Loading model...</div>
+
+<script>
+
+const video = document.getElementById("webcam");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const info = document.getElementById("info");
+
+let model;
+let lastTime = performance.now();
+
+async function setupCamera(){
+
+const stream = await navigator.mediaDevices.getUserMedia({
+video:true
+});
+
+video.srcObject = stream;
+
+return new Promise(resolve=>{
+video.onloadedmetadata = ()=>resolve(video);
+});
+
+}
+
+async function loadModel(){
+
+await tf.setBackend('webgl');
+
+model = await cocoSsd.load();
+
+info.innerHTML="Model Loaded";
+
+detect();
+
+}
+
+async function detect(){
+
+const start = performance.now();
+
+const predictions = await model.detect(video);
+
+const end = performance.now();
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+predictions.forEach(pred => {
+
+if(pred.score > 0.6){
+
+const [x,y,w,h] = pred.bbox;
+
+ctx.strokeStyle="red";
+ctx.lineWidth=3;
+ctx.strokeRect(x,y,w,h);
+
+ctx.fillStyle="red";
+ctx.font="18px Arial";
+ctx.fillText(
+pred.class+" "+(pred.score*100).toFixed(1)+"%",
+x,
+y>20 ? y-5 : 20
+);
+
+}
+
+});
+
+const now = performance.now();
+const fps = 1000/(now-lastTime);
+lastTime = now;
+
+const inferenceTime = end-start;
+
+info.innerHTML =
+"FPS: "+fps.toFixed(2)+" | Inference: "+inferenceTime.toFixed(2)+" ms";
+
+requestAnimationFrame(detect);
+
+}
+
+async function main(){
+
+await setupCamera();
+video.play();
+loadModel();
+
+}
+
+main();
+
+</script>
+
+</body>
+</html>

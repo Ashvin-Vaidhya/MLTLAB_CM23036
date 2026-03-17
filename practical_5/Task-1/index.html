@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Webcam Object Classification - MobileNet</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+
+<style>
+body{
+font-family: Arial;
+text-align:center;
+background:#f2f2f2;
+}
+
+video{
+border:3px solid black;
+border-radius:10px;
+}
+
+#predictions{
+margin-top:20px;
+font-size:20px;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Webcam Object Classification (MobileNet)</h1>
+
+<video id="webcam" width="400" height="300" autoplay></video>
+
+<div id="predictions">
+Loading model...
+</div>
+
+<script>
+
+const video = document.getElementById("webcam");
+const result = document.getElementById("predictions");
+
+let model;
+
+async function setupWebcam(){
+
+const stream = await navigator.mediaDevices.getUserMedia({
+video:true
+});
+
+video.srcObject = stream;
+
+return new Promise(resolve=>{
+video.onloadedmetadata = ()=>{
+resolve(video);
+};
+});
+
+}
+
+async function loadModel(){
+
+model = await mobilenet.load();
+result.innerHTML = "Model Loaded";
+
+classifyFrame();
+
+}
+
+async function classifyFrame(){
+
+const predictions = await model.classify(video);
+
+let output = "<h3>Top Predictions</h3>";
+
+predictions.forEach(p => {
+output += p.className + " : " + (p.probability*100).toFixed(2) + "%<br>";
+});
+
+result.innerHTML = output;
+
+setTimeout(classifyFrame,1000);
+
+}
+
+async function main(){
+
+await setupWebcam();
+video.play();
+loadModel();
+
+}
+
+main();
+
+</script>
+
+</body>
+</html>

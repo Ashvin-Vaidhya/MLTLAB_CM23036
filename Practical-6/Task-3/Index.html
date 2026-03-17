@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PoseNet Single vs Multi Pose</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
+
+<style>
+body{
+font-family:Arial;
+text-align:center;
+background:#eef2f7;
+}
+
+#container{
+position:relative;
+display:inline-block;
+}
+
+video{
+border:3px solid black;
+}
+
+canvas{
+position:absolute;
+left:0;
+top:0;
+}
+
+button{
+margin:10px;
+padding:10px 20px;
+font-size:16px;
+}
+
+#info{
+font-size:20px;
+font-weight:bold;
+margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>PoseNet Detection (Single vs Multi Pose)</h2>
+
+<button onclick="mode='single'">Single Pose</button>
+<button onclick="mode='multi'">Multi Pose</button>
+
+<div id="container">
+<video id="video" width="640" height="480" autoplay muted></video>
+<canvas id="canvas" width="640" height="480"></canvas>
+</div>
+
+<div id="info">Mode: Single Pose</div>
+
+<script>
+
+const video = document.getElementById("video");
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+const info = document.getElementById("info");
+
+let model;
+let mode = "single";
+
+async function setupCamera(){
+
+const stream = await navigator.mediaDevices.getUserMedia({
+video:true
+});
+
+video.srcObject = stream;
+
+return new Promise(resolve=>{
+video.onloadedmetadata = ()=>resolve(video);
+});
+
+}
+
+async function loadModel(){
+
+model = await posenet.load({
+architecture: "MobileNetV1",
+outputStride: 16,
+inputResolution: {width:640,height:480},
+multiplier:0.75
+});
+
+detect();
+
+}
+
+function drawKeypoints(keypoints){
+
+keypoints.forEach(point => {
+
+if(point.score > 0.5){
+
+ctx.beginPath();
+ctx.arc(point.position.x,point.position.y,5,0,2*Math.PI);
+ctx.fillStyle="red";
+ctx.fill();
+
+}
+
+});
+
+}
+
+function drawSkeleton(keypoints){
+
+const pairs = posenet.getAdjacentKeyPoints(keypoints,0.5);
+
+pairs.forEach(pair=>{
+
+ctx.beginPath();
+ctx.moveTo(pair[0].position.x,pair[0].position.y);
+ctx.lineTo(pair[1].position.x,pair[1].position.y);
+ctx.strokeStyle="lime";
+ctx.lineWidth=2;
+ctx.stroke();
+
+});
+
+}
+
+async function detect(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+if(mode==="single"){
+
+const pose = await model.estimateSinglePose(video,{
+flipHorizontal:false
+});
+
+drawKeypoints(pose.keypoints);
+drawSkeleton(pose.keypoints);
+
+info.innerHTML="Mode: Single Pose | Detected: 1 Person";
+
+}
+else{
+
+const poses = await model.estimateMultiplePoses(video,{
+flipHorizontal:false,
+maxDetections:5,
+scoreThreshold:0.5,
+nmsRadius:20
+});
+
+poses.forEach(pose=>{
+drawKeypoints(pose.keypoints);
+drawSkeleton(pose.keypoints);
+});
+
+info.innerHTML="Mode: Multi Pose | Detected: "+poses.length+" Persons";
+
+}
+
+requestAnimationFrame(detect);
+
+}
+
+async function main(){
+
+await setupCamera();
+video.play();
+loadModel();
+
+}
+
+main();
+
+</script>
+
+</body>
+</html>
