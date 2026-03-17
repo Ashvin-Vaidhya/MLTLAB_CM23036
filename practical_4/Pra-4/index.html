@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>AI Object Detection</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f2f2f2;
+text-align:center;
+}
+
+.container{
+width:700px;
+margin:auto;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 10px gray;
+}
+
+video,canvas,img{
+margin-top:20px;
+border-radius:10px;
+}
+
+button{
+padding:12px 25px;
+background:#3498db;
+color:white;
+border:none;
+border-radius:6px;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#2980b9;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>AI Object Detection</h2>
+
+<h4 id="status">Loading AI Model...</h4>
+
+<input type="file" id="upload">
+
+<br>
+
+<img id="img" width="400">
+
+<br><br>
+
+<button onclick="detect()">Detect Object</button>
+
+<h3>Detection Result</h3>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+let model;
+
+async function loadModel(){
+
+model = await cocoSsd.load();
+
+document.getElementById("status").innerHTML="Model Loaded Successfully";
+
+}
+
+loadModel();
+
+async function detect(){
+
+const file=document.getElementById("upload").files[0];
+
+if(!file){
+alert("Upload image first");
+return;
+}
+
+const img=document.getElementById("img");
+
+img.src=URL.createObjectURL(file);
+
+await new Promise(resolve=>img.onload=resolve);
+
+const predictions=await model.detect(img);
+
+let output="";
+
+if(predictions.length==0){
+output="No object detected";
+}
+
+predictions.forEach(p=>{
+
+output+=p.class+" : "+(p.score*100).toFixed(2)+" % <br>";
+
+});
+
+document.getElementById("result").innerHTML=output;
+
+}
+
+</script>
+
+</body>
+</html>

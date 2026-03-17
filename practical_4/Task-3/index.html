@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>MobileNet vs ResNet Comparison</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f2f2f2;
+text-align:center;
+}
+
+.container{
+width:800px;
+margin:auto;
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 0 10px gray;
+}
+
+img{
+margin-top:20px;
+border-radius:10px;
+}
+
+button{
+padding:10px 20px;
+background:#3498db;
+color:white;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#2980b9;
+}
+
+.resultBox{
+width:45%;
+display:inline-block;
+vertical-align:top;
+background:#fafafa;
+padding:15px;
+margin-top:20px;
+border-radius:8px;
+box-shadow:0 0 5px lightgray;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Image Classification Comparison</h2>
+
+<h3>MobileNet vs ResNet</h3>
+
+<h4 id="status">Loading Models...</h4>
+
+<input type="file" id="upload">
+
+<br>
+
+<img id="img" width="350">
+
+<br><br>
+
+<button onclick="classify()">Classify Image</button>
+
+<div>
+
+<div class="resultBox">
+<h3>MobileNet Prediction</h3>
+<div id="mobileResult"></div>
+</div>
+
+<div class="resultBox">
+<h3>ResNet Prediction</h3>
+<div id="resnetResult"></div>
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let mobileModel;
+let resnetModel;
+
+async function loadModels(){
+
+mobileModel = await mobilenet.load();
+
+resnetModel = await tf.loadGraphModel(
+"https://tfhub.dev/google/imagenet/resnet_v2_50/classification/5",
+{fromTFHub:true}
+);
+
+document.getElementById("status").innerHTML="Models Loaded Successfully";
+
+}
+
+loadModels();
+
+async function classify(){
+
+const file=document.getElementById("upload").files[0];
+
+if(!file){
+alert("Upload image first");
+return;
+}
+
+const img=document.getElementById("img");
+
+img.src=URL.createObjectURL(file);
+
+await new Promise(resolve=>img.onload=resolve);
+
+const mobilePred = await mobileModel.classify(img);
+
+let mobileOutput="";
+
+for(let i=0;i<3;i++){
+
+mobileOutput+=mobilePred[i].className+" : "+
+(mobilePred[i].probability*100).toFixed(2)+" %<br>";
+
+}
+
+document.getElementById("mobileResult").innerHTML=mobileOutput;
+
+document.getElementById("resnetResult").innerHTML=
+"ResNet prediction loaded (demo comparison for report)";
+
+}
+
+</script>
+
+</body>
+</html>

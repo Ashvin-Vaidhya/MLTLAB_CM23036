@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Fast MobileNet Webcam Classification</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+
+<style>
+body{
+font-family:Arial;
+text-align:center;
+background:#f2f2f2;
+}
+
+#container{
+position:relative;
+display:inline-block;
+}
+
+video{
+border:3px solid black;
+border-radius:10px;
+}
+
+canvas{
+position:absolute;
+left:0;
+top:0;
+}
+
+#result{
+font-size:24px;
+margin-top:15px;
+font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Fast Webcam Object Classification</h2>
+
+<div id="container">
+<video id="webcam" width="320" height="240" autoplay muted></video>
+<canvas id="overlay" width="320" height="240"></canvas>
+</div>
+
+<div id="result">Loading model...</div>
+
+<script>
+
+const video = document.getElementById("webcam");
+const canvas = document.getElementById("overlay");
+const ctx = canvas.getContext("2d");
+const result = document.getElementById("result");
+
+let model;
+
+async function setupCamera(){
+
+const stream = await navigator.mediaDevices.getUserMedia({
+video:{width:320,height:240}
+});
+
+video.srcObject = stream;
+
+return new Promise(resolve=>{
+video.onloadedmetadata = ()=>resolve(video);
+});
+
+}
+
+async function loadModel(){
+
+await tf.setBackend('webgl'); // GPU acceleration
+
+model = await mobilenet.load({
+version:1,
+alpha:0.5
+}); // lighter model
+
+result.innerHTML="Model Ready";
+
+detect();
+
+}
+
+async function detect(){
+
+const predictions = await model.classify(video);
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+if(predictions.length>0){
+
+const p = predictions[0];
+
+ctx.fillStyle="red";
+ctx.font="18px Arial";
+ctx.fillText(
+p.className + " : " + (p.probability*100).toFixed(1)+"%",
+10,25
+);
+
+result.innerHTML = p.className;
+
+}
+
+setTimeout(detect,300); // faster loop
+
+}
+
+async function main(){
+
+await setupCamera();
+video.play();
+loadModel();
+
+}
+
+main();
+
+</script>
+
+</body>
+</html>
