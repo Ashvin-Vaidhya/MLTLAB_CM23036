@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Accuracy & Confusion Matrix</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #111827;
+    color: white;
+    text-align: center;
+}
+.container {
+    background: #1f2937;
+    padding: 20px;
+    margin: 50px auto;
+    width: 500px;
+    border-radius: 10px;
+}
+button {
+    padding: 10px 20px;
+    background: #f59e0b;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+table {
+    margin: auto;
+    border-collapse: collapse;
+}
+td, th {
+    border: 1px solid white;
+    padding: 8px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h2>📊 Accuracy & Confusion Matrix</h2>
+
+<button onclick="runTest()">Run Test</button>
+
+<h3 id="acc"></h3>
+<div id="matrix"></div>
+
+</div>
+
+<script>
+function runTest(){
+
+let actual = ["Apple","Apple","Banana","Orange","Banana","Orange"];
+let predicted = ["Apple","Banana","Banana","Orange","Apple","Orange"];
+
+let correct = 0;
+
+let classes = ["Apple","Banana","Orange"];
+let matrix = {};
+
+classes.forEach(a=>{
+    matrix[a]={};
+    classes.forEach(b=>matrix[a][b]=0);
+});
+
+for(let i=0;i<actual.length;i++){
+    if(actual[i]===predicted[i]) correct++;
+    matrix[actual[i]][predicted[i]]++;
+}
+
+let acc = (correct/actual.length)*100;
+document.getElementById("acc").innerText = "Accuracy: "+acc.toFixed(2)+"%";
+
+// Table UI
+let html = "<table><tr><th></th>";
+classes.forEach(c=>html+="<th>"+c+"</th>");
+html+="</tr>";
+
+classes.forEach(a=>{
+    html+="<tr><th>"+a+"</th>";
+    classes.forEach(b=>{
+        html+="<td>"+matrix[a][b]+"</td>";
+    });
+    html+="</tr>";
+});
+
+html+="</table>";
+
+document.getElementById("matrix").innerHTML = html;
+}
+</script>
+
+</body>
+</html>
