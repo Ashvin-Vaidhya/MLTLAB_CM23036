@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Fruit Classifier</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/knn-classifier"></script>
+
+<style>
+body {
+    font-family: Arial;
+    background: #0f172a;
+    color: white;
+    text-align: center;
+}
+.container {
+    background: #1e293b;
+    padding: 20px;
+    margin: 50px auto;
+    width: 400px;
+    border-radius: 10px;
+}
+button {
+    padding: 10px;
+    margin: 5px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.green { background: #22c55e; }
+.blue { background: #3b82f6; }
+</style>
+</head>
+
+<body>
+<div class="container">
+<h2>🍎 Fruit Classifier</h2>
+
+<video id="webcam" autoplay playsinline width="300"></video><br>
+
+<button class="green" onclick="add('Apple')">Apple</button>
+<button class="green" onclick="add('Banana')">Banana</button>
+<button class="green" onclick="add('Orange')">Orange</button>
+
+<br><br>
+<button class="blue" onclick="predict()">Start Prediction</button>
+
+<h3 id="out">Loading...</h3>
+</div>
+
+<script>
+let net, classifier;
+const webcam = document.getElementById("webcam");
+
+async function init(){
+    const stream = await navigator.mediaDevices.getUserMedia({video:true});
+    webcam.srcObject = stream;
+
+    net = await mobilenet.load();
+    classifier = knnClassifier.create();
+
+    document.getElementById("out").innerText="Ready!";
+}
+init();
+
+function add(label){
+    const img = tf.browser.fromPixels(webcam);
+    const act = net.infer(img, true);
+    classifier.addExample(act, label);
+    document.getElementById("out").innerText = label + " added";
+}
+
+async function predict(){
+    while(true){
+        const img = tf.browser.fromPixels(webcam);
+        const act = net.infer(img, true);
+        const res = await classifier.predictClass(act);
+
+        document.getElementById("out").innerText =
+            res.label + " ("+(res.confidences[res.label]*100).toFixed(1)+"%)";
+
+        await tf.nextFrame();
+    }
+}
+</script>
+
+</body>
+</html>

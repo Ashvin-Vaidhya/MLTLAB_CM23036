@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Attendance System | Face-API.js</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Face-API.js library from CDN (vladmandic fork is better maintained) -->
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+</head>
+<body>
+    <div id="loading-overlay">
+        <div class="loader"></div>
+        <p id="status-text">Initializing AI Models...</p>
+    </div>
+
+    <div class="dashboard">
+        <header>
+            <div class="logo">
+                <span class="logo-icon">👤</span>
+                <h1>SmartScan Attendance</h1>
+            </div>
+            <div class="status-badge" id="system-status">
+                <span class="status-dot"></span>
+                <span id="status-label">System Offline</span>
+            </div>
+        </header>
+
+        <main>
+            <!-- Left Column: Webcam and Detection -->
+            <section class="video-container">
+                <div class="card glass">
+                    <div class="card-header">
+                        <h2>Real-time Recognition</h2>
+                        <div class="controls">
+                            <button id="toggle-webcam" class="btn btn-primary">Start Webcam</button>
+                        </div>
+                    </div>
+                    <div class="video-wrapper">
+                        <video id="webcam" autoplay muted playsinline></video>
+                        <canvas id="overlay"></canvas>
+                    </div>
+                </div>
+
+                <div class="card glass enrollment-card">
+                    <div class="card-header">
+                        <h2>Face Enrollment</h2>
+                    </div>
+                    <form id="enrollment-form">
+                        <div class="form-group">
+                            <input type="text" id="user-name" placeholder="Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="user-roll" placeholder="Roll ID" required>
+                        </div>
+                        <button type="submit" id="enroll-btn" class="btn btn-secondary" disabled>Capture & Enroll</button>
+                    </form>
+                    <p class="hint">Ensure your face is clearly visible in the webcam before enrolling.</p>
+                </div>
+            </section>
+
+            <!-- Right Column: Logs -->
+            <section class="log-container">
+                <div class="card glass">
+                    <div class="card-header">
+                        <h2>Attendance Log</h2>
+                        <button id="export-csv" class="btn btn-outline">Export CSV</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table id="attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Roll ID</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Confidence</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendance-list">
+                                <!-- Log entries will appear here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="card glass info-card">
+                    <h3>System Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Enrolled Users</span>
+                            <span class="stat-value" id="count-enrolled">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Total Logs</span>
+                            <span class="stat-value" id="count-logs">0</span>
+                        </div>
+                    </div>
+                    <button id="clear-data" class="btn btn-outline" style="width: 100%; margin-top: 1rem; border-color: var(--error); color: var(--error);">Clear All Data</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 SmartScan AI Solutions. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

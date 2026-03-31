@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ML Model in Browser</title>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+
+<style>
+body {
+    font-family: Arial;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    text-align: center;
+    padding: 50px;
+}
+
+.container {
+    background: rgba(255,255,255,0.1);
+    padding: 30px;
+    border-radius: 15px;
+    width: 400px;
+    margin: auto;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.train { background: #28a745; color: white; }
+.load { background: #ffc107; color: black; }
+.predict { background: #17a2b8; color: white; }
+
+input {
+    padding: 10px;
+    width: 80%;
+    border-radius: 8px;
+    border: none;
+    margin-top: 10px;
+}
+
+#status {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.loader {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #fff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    margin: 10px auto;
+    animation: spin 1s linear infinite;
+    display: none;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🤖 ML Model in Browser</h2>
+
+    <button class="train" onclick="trainModel()">Train Model</button>
+    <button class="load" onclick="loadModel()">Load Model</button>
+
+    <br>
+
+    <input type="number" id="inputValue" placeholder="Enter value (x)">
+    <br>
+    <button class="predict" onclick="predict()">Predict</button>
+
+    <div class="loader" id="loader"></div>
+
+    <p id="status">Status: Idle</p>
+    <h3 id="output"></h3>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

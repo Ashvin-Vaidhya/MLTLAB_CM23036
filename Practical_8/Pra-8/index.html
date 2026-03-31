@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fruit Classifier</title>
+
+    <!-- TensorFlow -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+
+    <!-- MobileNet -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet"></script>
+
+    <!-- KNN Classifier -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/knn-classifier"></script>
+</head>
+
+<body style="text-align:center; font-family:Arial;">
+
+<h2>🍎 Fruit Classifier (Transfer Learning)</h2>
+
+<video id="webcam" autoplay playsinline width="300"></video>
+
+<br><br>
+
+<button onclick="addExample('Apple')">Add Apple</button>
+<button onclick="addExample('Banana')">Add Banana</button>
+<button onclick="addExample('Orange')">Add Orange</button>
+
+<br><br>
+
+<button onclick="predict()">Start Predicting</button>
+
+<h3 id="output">Loading...</h3>
+
+<script src="script.js"></script>
+
+</body>
+</html>
